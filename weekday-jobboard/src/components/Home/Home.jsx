@@ -110,7 +110,7 @@ function Home({ jobData }) {
     const filteredJobsData = jobData.filter((job) => 
                                 roles.includes(job.jobRole) ||
                                 location.includes(job.location) ||
-                                exp.includes(job.minExp) ||
+                                exp.includes(job.minExp>0?job.minExp:0) ||
                                 pay.includes(job.minJdSalary)                         
                                 
                             );
