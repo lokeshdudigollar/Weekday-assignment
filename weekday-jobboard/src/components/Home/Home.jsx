@@ -289,7 +289,7 @@ function Home({ jobData }) {
                                 <Typography variant="body2" color="textSecondary" component="p">
                                     {truncateText(job.jobDetailsFromCompany, 100)}
                                 </Typography>
-                                <Button sx={{marginLeft:'100px'}} size="small" color="primary" onClick={() => handleViewDetails(job)}>
+                                <Button sx={{marginLeft:'80px'}} size="small" color="primary" onClick={() => handleViewDetails(job)}>
                                     View job
                                 </Button>
                                 <Typography gutterBottom variant="h7" component="h6">
@@ -303,7 +303,7 @@ function Home({ jobData }) {
                                     }
                                     
                                 </Typography>
-                                <Button sx={{marginLeft:'100px'}} size="small" color="primary" variant="outlined">
+                                <Button sx={{marginLeft:'80px'}} size="small" color="primary" variant="outlined">
                                     Apply Now
                                 </Button>
                                 </CardContent>
