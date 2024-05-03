@@ -48,9 +48,19 @@ function Home({ jobData }) {
     //states to be used for filtering data based on user selection
   const [roles, setRoles] = useState([]);
   const [location, setLocation]  = useState([])
-  const [exp, setExp]  = useState([]);
-  const [pay, setPay]  = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([])
+  const [exp, setExp]  = useState('');
+  const [pay, setPay]  = useState('');
+  const [filteredJobs, setFilteredJobs] = useState([]);
+
+  useEffect(() =>{
+    if(roles.length> 0 || location.length > 0 || exp || pay)
+      handlefilterJobs();
+    else
+      setFilteredJobs(jobData);
+  
+    
+
+  },[jobData])
 
   //This function is used to display limited job details text
   const truncateText = (text, maxLength) => {
@@ -96,33 +106,65 @@ function Home({ jobData }) {
 
   //recording change in user selections for Experience
   const handleExpChange = (event) => {
-    setExp([...exp, event.target.value]);
+    
+    setExp(event.target.value);
   }
 
   //recording change in user selections for Minimum Base Pay
   const handlePayChange = (event) =>{
-    setPay([...pay,event.target.value]);
+    setPay(event.target.value);
   }
 
   const handlefilterJobs = () =>{
     //Apply filters
     //or operator is used so user can filter with either of the inputs
-    const filteredJobsData = jobData.filter((job) => 
-                                roles.includes(job.jobRole) ||
-                                location.includes(job.location) ||
-                                exp.includes(job.minExp>0?job.minExp:0) ||
-                                pay.includes(job.minJdSalary)                         
-                                
-                            );
+    
+
+    const filteredJobsData = jobData.filter((job) =>{
+      let conditionResult = true;
+        if (roles && roles.length > 0 ) {
+          //console.log('roles: ', roles, ' job roles: ', job.jobRole)
+          conditionResult = roles.includes(job.jobRole);
+          //console.log('role result: ', conditionResult);
+        }
+
+        if (location && location.length > 0) {
+          //console.log('condition result: ',conditionResult,'location: ', location, ' job location: ', job.location )
+          conditionResult = conditionResult && location.includes(job.location);
+          //console.log('location result: ', conditionResult);
+        }
+
+        if (exp) {
+          console.log('condition result: ',conditionResult,'exp: ', exp, ' job exp: ', job.minExp)
+          conditionResult = conditionResult && parseInt(exp) >= parseInt(job.minExp);
+          console.log('exp result: ', conditionResult);
+        }
+     
+        if (pay) {
+          //console.log('condition result: ',conditionResult,'pay: ', pay, ' job pay: ', job.minJdSalary)
+          conditionResult = conditionResult && parseInt(pay) >= parseInt(job.minJdSalary);
+          //console.log('pay result: ', conditionResult);
+
+
+        }
+        //console.log('Final result: ', conditionResult);
+        return conditionResult;
+      }
+    )                        
+                         
         //update the state data to capture the filtered data
         setFilteredJobs(filteredJobsData);
+        //console.log('filtered jobs: ',filteredJobsData)
+        
+        
     }
 
     //to make sure above function is called whenever there's change in user selections
    useEffect(handlefilterJobs,[roles,location, exp, pay])
+   
 
   
-
+   //console.log('IN render filtered jobs: ',filteredJobs)
   return (
     <div>
         <div>
@@ -192,7 +234,7 @@ function Home({ jobData }) {
                             <MenuItem value={3}>3 years</MenuItem>
                             <MenuItem value={4}>4 years</MenuItem>
                             <MenuItem value={5}>5 years</MenuItem>
-                            <MenuItem value={9999999}>5+</MenuItem>
+                            <MenuItem value={6}>5+</MenuItem>
                         </Select>
                     </FormControl>
 
@@ -212,7 +254,7 @@ function Home({ jobData }) {
                             <MenuItem value={35}>35 USD</MenuItem>
                             <MenuItem value={61}>61 USD</MenuItem>
                             <MenuItem value={64}>64 USD</MenuItem>
-                            <MenuItem value={9999999}>64 USD+</MenuItem>
+                            <MenuItem value={65}>64 USD+</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>  
@@ -227,11 +269,11 @@ function Home({ jobData }) {
                 <h2>{error}</h2>
 
             ) : (
-                <Grid container spacing={3} alignItems="center">
+                <Grid container spacing={3} alignItems="center" justify="center">
                 {/*if there's filter data that is rendered else full jobData is rendered*/}
                 {/*Since there's no company name coming from API, Weekday is used for all jobs*/}
                 {/*the data is mapped to get each job's details*/}
-                {(filteredJobs.length ? filteredJobs : jobData).map((job, index) => (
+                {filteredJobs.map((job, index) => (
                         <Grid item xs={12} sm={6} md={4} key ={index}>
                             <Card sx={{maxWidth: '100%', margin: '20px'}}>
                                 <CardContent>
